@@ -4,7 +4,6 @@
 #include <iostream>
 #include <iomanip>
 #include <bitset>
-#include "../include/InvalidAddressException.h"
 
 using namespace std;
 
@@ -22,11 +21,15 @@ class SetCache {
         SetCache(int line, int set);
         bool read(unsigned short address, const vector<int> memory);
         void print();
+        void reset();
+
+        CacheBlock* getLastCalled() { return lastCalled; }
         
     private:
         //map<int, int> cache;
         vector<vector<CacheBlock>> cache;
         int numSets;
         int linePerSet;
+        CacheBlock* lastCalled;
 
 };

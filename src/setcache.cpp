@@ -1,12 +1,14 @@
 #include "../include/setcache.h"
 
 SetCache::SetCache(int set, int line) : 
-    cache(vector<vector<CacheBlock>>(set, vector<CacheBlock>(line))), numSets(set), linePerSet(line) {}
+    cache(vector<vector<CacheBlock>>(set, vector<CacheBlock>(line))), numSets(set), 
+    linePerSet(line), lastCalled(NULL) {}
 
 bool SetCache::read(unsigned short address, const vector<int> memory) {
-    for (auto i : cache) {
-        for (auto j : i) {
-            if (j.tag == address && j.valid) {
+    for (int i = 0; i < cache.size(); i++) {
+        for (int j = 0; j < cache.at(i).size(); j++) {
+            if (cache.at(i).at(j).tag == address && cache.at(i).at(j).valid) {
+                lastCalled = &cache.at(i).at(j);
                 return true;
             }
         }
@@ -15,13 +17,14 @@ bool SetCache::read(unsigned short address, const vector<int> memory) {
     unsigned short index = address % 4;
     unsigned short slot = (cache.at(index).at(0).age >= cache.at(index).at(1).age) ? 0 : 1;
 
-    CacheBlock* currBlock = &cache.at(index).at(slot);
+    lastCalled = &cache.at(index).at(slot);
 
-    currBlock->tag = address;
-    currBlock->data = memory.at(address);
-    currBlock->valid = true;
-    currBlock->age = 0;
+    lastCalled->tag = address;
+    lastCalled->data = memory.at(address);
+    lastCalled->valid = true;
+    lastCalled->age = 0;
     cache.at(index).at((slot == 0) ? 1 : 0).age++;
+
     return false;
 }
 
@@ -50,4 +53,9 @@ void SetCache::print() {
         for (int i = 0; i < linePerSet; i++) { cout << "--------+--------+"; }
     }
     cout << "\n";
+}
+
+void SetCache::reset() {
+    cache = vector<vector<CacheBlock>>(numSets, vector<CacheBlock>(linePerSet));
+    lastCalled = NULL;
 }
