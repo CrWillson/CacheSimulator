@@ -1,4 +1,5 @@
 #include "../include/setcache.h"
+#include <string>
 
 using namespace std;
 
@@ -9,7 +10,7 @@ void clear() {
 bool is_integer(const std::string& str)
 {
     try {
-        std::stoi(str);
+        stoi(str);
         return true;
     }
     catch (...) {
