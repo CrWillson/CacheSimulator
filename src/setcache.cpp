@@ -29,6 +29,7 @@ bool SetCache::read(unsigned short address, const vector<int> memory) {
 }
 
 void SetCache::print() {
+    cout << "Project 3 - Cache Simulator" << endl;
     cout << "+-----+";
     for (int i = 0; i < linePerSet; i++) { cout << "--------+--------+"; }
     cout << "\n| Set |";
